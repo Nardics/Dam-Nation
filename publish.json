@@ -1,8 +1,8 @@
 {
-    "title": "Title of Project",
-    "info": "Add info about project",
-    "coordinates": [38, -84.5],
-    "author": "Do you want to add your name?",
-    "link": "http://newmapsplus.uky.edu"
+    "title": "America's Dams",
+    "info": "There are thousands of dams in the U.S. Let's see where, how old, and how big they are.",
+    "coordinates": [39.5, -98.35],
+    "author": "MapNard",
+    "link": null
 
 }
