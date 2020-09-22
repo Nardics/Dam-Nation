@@ -58,7 +58,7 @@
             font-size: 0.9em;
             font-weight: bolder;
             border: 2px solid rgba(244, 244, 244, 0.2);
-            background: rgba(100, 100, 100, 0.9);
+            background: rgba(172, 172, 172, 0.9);
             color: rgba(244, 244, 244, 0.8);
             /* box-shadow: 0 0 8px rgba(0, 0, 0, 0.2); */
             border-radius: 5px;
@@ -71,7 +71,7 @@
 
         #footer {
             width: 100%;
-            background: rgba(244, 244, 244, 0.8);
+            background: rgba(214, 200, 149, 0.795);
             color: rgba(20, 20, 20, 0.8);
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             height: 0px;
@@ -159,8 +159,16 @@
             Army Corps of Engineers <a href="https://data-usdot.opendata.arcgis.com/datasets/dams/">National Inventory
                 of Dams</a>.
             <br>Map created by <a href="https://nardics.github.io/Florida-Rescue/">MapNard</a>.
-        </div>
+            <br>
+            <br>
+            <span style='font-weight: bolder; font-style: oblique'> Dams Legend</span><br><br>
+            <span style="Color:#9848F0"> Built before 1900 </span><br>
+            <span style="Color:#DE575B"> Built 1900 - 1925 </span><br>
+            <span style="Color:#09E0A0"> Built 1925 - 1950</span><br>
+            <span style="Color:#86B2DF"> Built 1950 - 1975 </span><br>
+            <span style="Color:#E0D6E5"> Built before 2000 </span>
 
+        </div>
 
     </div>
 
@@ -175,7 +183,12 @@
         crossorigin=""></script>
 
     <script>
-        const map = L.map('map').setView([38, -98], 5);
+        var options = {
+            center: [39.5, -98.35],
+            zoom: 4.5
+
+        }
+        const map = L.map('map', options)
         let clicked = false
 
 
@@ -186,19 +199,19 @@
         }).addTo(map);
 
 
-      
+
+
         /*
-   
-           // Report zoom level
-   
-           map.on("zoom", function () {
-               const zoomLevel = map.getZoom()
-               if (zoomLevel > 4) {
-                   const reportZoom = `Current zoom level: ${zoomLevel}`
-                   console.log(reportZoom)
-               }
-           });
-   */
+                // Report zoom level
+        
+                map.on("zoom", function () {
+                    const zoomLevel = map.getZoom()
+                    if (zoomLevel > 4) {
+                        const reportZoom = `Current zoom level: ${zoomLevel}`
+                        console.log(reportZoom)
+                    }
+                });*/
+
 
         // BEGIN WRITING YOUR SOLUTION CODE HERE
 
@@ -207,14 +220,45 @@
         });
 
 
-        // create proportionate circles for dam capacity
+        // create representative circles for dam capacity
         function getRadius(area) {
             var radius = Math.sqrt(area / Math.PI);
-            return radius * .8;
+            console.log(radius);
+
+            if (radius < 250) {
+                return 3
+            } else if (radius < 500) {
+                return 6
+            } else if (radius < 750) {
+                return 9
+            } else if (radius < 1000) {
+                return 12
+            } else if (radius < 1250) {
+                return 15
+            } else if (radius < 1500) {
+                return 18
+            } else if (radius < 1750) {
+                return 21
+            } else if (radius < 2000) {
+                return 24
+            } else if (radius < 2500) {
+                return 27
+            } else if (radius < 3500) {
+                return 30
+            } else if (radius > 3500) {
+                return 50
+            }
+
+            return radius;
+
+
+
         }
 
 
-        // create dams layer #E01B14
+
+        // create dams layer 
+
         var waterHolders = L.geoJson(myDams, {
 
             pointToLayer: function (feature, latlng) {
@@ -228,8 +272,8 @@
                     stroke: 5,
                     opacity: .5,
                     fillColor: getColor(year),
-                    fillOpacity: .3,
-                    radius: getRadius(feature.properties['MAX_STOR'] / 25000)
+                    fillOpacity: .4,
+                    radius: getRadius(feature.properties['MAX_STOR'])
                 });
 
             },
@@ -250,11 +294,11 @@
                 <b>Surface area:</b> ${props['SURF_AREA'].toLocaleString()} acres<br>
                 <b>Capacity:</b> ${props['MAX_STOR'].toLocaleString()} acre-feet<br>`
                 //<br><b>Type</b>:${props['PURPOSES']};
-             
+
 
                 const uses = props['PURPOSES'];
                 for (let i = 0; i < uses.length; i++);
-                console.log(uses);
+                // console.log(uses);
                 popup += `<b>Type:</b>${uses}`;
 
 
@@ -266,13 +310,17 @@
 
         }).addTo(map);
 
+        var dataExtent = waterHolders.getBounds();
+        map.setMaxBounds(dataExtent);
+        map.setMinZoom(3.5)
+
         waterHolders.eachLayer(function (layer) {
             layer.on('mouseover', function (e) {
                 e.target.setStyle({
-                    color: '#F5E404',
-                    fillColor: '#F5E404',
+                    color: '#FF1CDF', // #F5E404 #0AFB2E #FF1CDF
+                    fillColor: '#FF1CDF',
                     weight: .1,
-                    fillOpacity: .1
+                    fillOpacity: .5
                 })
                 this.openPopup()
             })
@@ -286,13 +334,10 @@
 
 
 
-
-
-
         function getColor(year) {
             var t = Number(year)
             if (t < 1900) {
-                return '#E63F37'
+                return '#9848F0'
             } else if (t < 1925) {
                 return '#DE575B'
             } else if (t < 1950) {
