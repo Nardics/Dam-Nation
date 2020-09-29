@@ -286,8 +286,9 @@
             },
             onEachFeature: function (feature, layer) {
                 var props = feature.properties;
+                var estDepth = props['MAX_STOR']/props['SURF_AREA']
                 //console.log(props);
-                var popup = `<b>${props['DAM_NAME']}, ${props['STATE']}.</b><br>
+                var popup = `<h3 style='margin-bottom:-5px;'>${props['DAM_NAME']}, ${props['STATE']}.</h3><br>
                 <b>Year built:</b> ${props['YR_COMPL']}<br>
                 <b>Nearest City:</b> ${props['CITY']}<br>
                 <b>Drainage Area:</b> ${props['DRAIN_AREA'].toLocaleString()} sq mi.<br>
@@ -311,7 +312,8 @@
         }).addTo(map);
 
         var dataExtent = waterHolders.getBounds();
-        map.setMaxBounds(dataExtent);
+        var usExtent= [[90, -180], [0, -50]]
+        map.setMaxBounds(usExtent);
         map.setMinZoom(3.5)
 
         waterHolders.eachLayer(function (layer) {
